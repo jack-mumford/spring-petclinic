@@ -27,3 +27,6 @@ jobs:
           cache: maven
       - name: Build with Maven Wrapper
         run: ./mvnw -B package
+
+      - name: Deploy to Nexus
+        run: ./mvnw deploy -DaltDeploymentRepository=nexus::default::http://192.168.2.148:8082/repository/maven-snapshots/

@@ -31,5 +31,5 @@ jobs:
       - name: Build with Maven Wrapper
         run: ./mvnw -B package
 
-      - name: Deploy to Nexus BALLS
+      - name: Deploy to Nexus BALLS and Sack
         run: ./mvnw deploy 

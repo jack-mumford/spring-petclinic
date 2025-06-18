@@ -35,6 +35,13 @@
 
   </properties>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>nexus</id>
+      <url>http://192.168.2.148:8082/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <dependencies>
     <!-- Spring and Spring Boot dependencies -->
     <dependency>

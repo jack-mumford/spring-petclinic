@@ -25,11 +25,8 @@ jobs:
           java-version: ${{matrix.java}}
           distribution: 'adopt'
           cache: maven
-          server-id: nexus # ID of the server to config in settings.xml
-          server-username: ${{ secrets.NEXUS_USERNAME }}
-          server-password: ${{ secrets.NEXUS_PASSWORD }}
       - name: Build with Maven Wrapper
         run: ./mvnw -B package
 
       - name: Deploy to Nexus BALLS
-        run: ./mvnw deploy -DaltDeploymentRepository=nexus::default::http://192.168.2.148:8082/repository/maven-snapshots/
+        run: ./mvnw deploy 

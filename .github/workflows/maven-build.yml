@@ -43,5 +43,5 @@ jobs:
           </settings>
           EOF
 
-      - name: Deploy to Nexus BALLS and Sacks
+      - name: Deploy to Nexus BALLS and Sackss
         run: ./mvnw -X deploy 

@@ -43,5 +43,5 @@ jobs:
           </settings>
           EOF
 
-      - name: Deploy to Nexus professionally xD
+      - name: Deploy to Nexus professionally
         run: ./mvnw -X deploy 

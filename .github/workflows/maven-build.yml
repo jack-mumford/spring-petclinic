@@ -36,7 +36,10 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build Docker image with Maven
-        run: ./mvnw spring-boot:build-image -Dspring-boot.build-image.image=jackregistry.azurecr.io/spring-petclinic:latest
+        run: ./mvnw spring-boot:build-image
+
+      - name: Tag image for ACR
+        run: docker tag spring-petclinic:3.1.0-SNAPSHOT jackregistry.azurecr.io/spring-petclinic:latest
 
       - name: Push Docker image to ACR
         run: docker push jackregistry.azurecr.io/spring-petclinic:latest

@@ -25,13 +25,18 @@ jobs:
           java-version: ${{matrix.java}}
           distribution: 'adopt'
           cache: maven
+          server-id: nexus
+          server-username: ${{ secrets.NEXUS_USERNAME }}
+          server-password: ${{ secrets.NEXUS_PASSWORD }}
+      
       - name: Build with Maven Wrapper
         run: ./mvnw -B package
-
-      - name: Create Maven settings.xml
+      
+      # Create settings.xml file with both Nexus credentials
+      - name: Create Maven Settings
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml <<EOF
+          cat > ~/.m2/settings.xml << EOF
           <settings>
             <servers>
               <server>
@@ -39,9 +44,30 @@ jobs:
                 <username>${{ secrets.NEXUS_USERNAME }}</username>
                 <password>${{ secrets.NEXUS_PASSWORD }}</password>
               </server>
+              <server>
+                <id>colleague-nexus</id>
+                <username>${{ secrets.COLLEAGUE_NEXUS_USERNAME }}</username>
+                <password>${{ secrets.COLLEAGUE_NEXUS_PASSWORD }}</password>
+              </server>
             </servers>
           </settings>
           EOF
-
-      - name: Deploy to Nexus professionally
-        run: ./mvnw -X deploy 
+          echo "Created Maven settings file with all Nexus credentials"
+      
+      # Deploy to your Nexus repository
+      - name: Deploy to Nexus
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          echo "Deploying to Nexus repository..."
+          ./mvnw -B deploy -DskipTests -DaltDeploymentRepository=nexus::http://172.16.231.151:8081/repository/maven-snapshots/
+        timeout-minutes: 5
+        continue-on-error: true
+      
+      # Deploy to colleague's Nexus repository
+      - name: Deploy to Colleague's Nexus
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          echo "Deploying to colleague's Nexus repository..."
+          ./mvnw -B deploy -DskipTests -DaltDeploymentRepository=colleague-nexus::https://860f-2603-3006-0-7500-10a3-82f6-7174-5ec7.ngrok-free.app:/repository/maven-snapshots/
+        timeout-minutes: 5
+        continue-on-error: true

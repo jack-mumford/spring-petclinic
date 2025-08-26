@@ -26,7 +26,7 @@ jobs:
           distribution: 'adopt'
           cache: maven
           server-id: nexus
-          server-username: ${{ secrets.NEXUS_USERNAME }}
+          server-username: ${{ secrets.NEXUS_USER }}
           server-password: ${{ secrets.NEXUS_PASSWORD }}
       
       - name: Build with Maven Wrapper
@@ -41,13 +41,8 @@ jobs:
             <servers>
               <server>
                 <id>nexus</id>
-                <username>${{ secrets.NEXUS_USERNAME }}</username>
+                <username>${{ secrets.NEXUS_USER }}</username>
                 <password>${{ secrets.NEXUS_PASSWORD }}</password>
-              </server>
-              <server>
-                <id>colleague-nexus</id>
-                <username>${{ secrets.COLLEAGUE_NEXUS_USERNAME }}</username>
-                <password>${{ secrets.COLLEAGUE_NEXUS_PASSWORD }}</password>
               </server>
             </servers>
           </settings>
@@ -59,15 +54,6 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           echo "Deploying to Nexus repository..."
-          ./mvnw -B deploy -DskipTests -DaltDeploymentRepository=nexus::http://172.16.231.151:8081/repository/maven-snapshots/
-        timeout-minutes: 5
-        continue-on-error: true
-      
-      # Deploy to colleague's Nexus repository
-      - name: Deploy to Colleague's Nexus
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: |
-          echo "Deploying to colleague's Nexus repository..."
-          ./mvnw -B deploy -DskipTests -DaltDeploymentRepository=colleague-nexus::https://860f-2603-3006-0-7500-10a3-82f6-7174-5ec7.ngrok-free.app:/repository/maven-snapshots/
+          ./mvnw -B deploy -DskipTests -DaltDeploymentRepository=nexus::https://5dc4d06fa4f7.ngrok-free.app:/repository/maven-snapshots/
         timeout-minutes: 5
         continue-on-error: true
